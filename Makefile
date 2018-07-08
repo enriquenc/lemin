@@ -1,4 +1,4 @@
-NAME = lemin
+NAME = lem-in
 
 SRCNAME	=   main.c \
 

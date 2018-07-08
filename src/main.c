@@ -12,8 +12,42 @@
 
 #include "../include/lemin.h"
 
-int main()
+void push_back(t_room **rooms, char *line, int  id)
 {
-    ft_printf("Hello my first T2 project\n");
-    return (0);
+	t_room *r;
+
+	r = (t_room *)malloc(sizeof(t_room));
+	r->name = ft_itoa(line);
+	r->id = id;
+	if (rooms == NULL)
+		*top = r;
+	else
+	{
+		
+	}
+}
+
+void check_hash(char *line)
+{
+
+}
+
+void check_line(char *line, rooms)
+{
+	if (line[0] == '#')
+	{
+		check_hash(rooms, line);
+	}
+}
+
+int	main(void)
+{
+	char *line;
+	t_room *rooms;
+
+	while(get_next_line(0, &line) > 0)
+	{
+		check_line(line, rooms);
+	}
+	return (0);
 }

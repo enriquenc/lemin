@@ -13,6 +13,13 @@
 #ifndef LEMIN_H
 # define LEMIN_H
 
-#include "../libft/include/libft.h"
+# include "../libft/include/libft.h"
+
+typedef	struct	s_room
+{
+	int		id;
+	char	*name;
+	struct s_room *next;
+}				t_room;
 
 #endif
