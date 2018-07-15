@@ -5,7 +5,7 @@ SRCNAME	=   main.c \
 SRC    = $(addprefix src/, $(SRCNAME))
 OBJECT = $(SRC:.c=.o)
 FLAGS  = -Wall -Wextra -Werror
-HDIR   = include/lemin.h
+HDIR   = include
 LIBFT = libft/libft.a
 
 all: lib $(NAME)

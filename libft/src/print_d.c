@@ -111,7 +111,6 @@ int				print_d(t_flist *lformat, va_list *list)
 {
 	intmax_t	nbr;
 	int			result;
-	int			i;
 	t_sign		*sign;
 
 	if (lformat->precision >= 0)
@@ -120,7 +119,6 @@ int				print_d(t_flist *lformat, va_list *list)
 	nbr = get_dnbr(lformat, list);
 	result = 0;
 	result += check_sign(lformat, nbr, sign);
-	i = 0;
 	if (lformat->flags->zero)
 		result += print_sign(lformat, &nbr, sign);
 	if (lformat->flags->minus)

@@ -12,14 +12,25 @@
 
 #ifndef LEMIN_H
 # define LEMIN_H
+# define NOT_CHECKED -1
+# define ALREADY_IN_PATH -2
 
 # include "../libft/include/libft.h"
+# include <stdint.h>
 
 typedef	struct	s_room
 {
-	int		id;
-	char	*name;
-	struct s_room *next;
+	int				id;
+	int				length;
+	char			*name;
+	struct s_room	*next;
 }				t_room;
 
+typedef struct	s_lem
+{
+	int start;
+	int end;
+	int number_of_ants;
+	int **adj_matrix;
+}				t_lem;
 #endif
