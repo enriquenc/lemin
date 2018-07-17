@@ -13,11 +13,20 @@
 #include "../include/lemin.h"
 #include <stdio.h>
 
+
+/*
+** Вывод ошибок
+*/
+
 void error(void)
 {
 	ft_printf("ERROR\n");
 	exit(0); 
 }
+
+/*
+** Добавление комнаты в список
+*/
 
 void push_back(t_room **back, char *name)
 {
@@ -29,21 +38,30 @@ void push_back(t_room **back, char *name)
 	}
 	else
 	{
-		(*back)->length = NOT_CHECKED;
 		(*back)->next = (t_room *)malloc(sizeof(t_room));
+		(*back)->next->length = NOT_CHECKED;
 		(*back)->next->id = (*back)->id + 1;
 		(*back)->next->name = ft_strdup(name);
 		(*back) = (*back)->next;
+		(*back)->next = NULL;
 	}
 }
 
+/*
+** Функия для работы с хешами
+*/
+
 void check_hash(char *line, t_lem *lemin, t_room **back)
 {
-	if (ft_strequ(line + 2, "#start") && lemin->start == -1)
+	if (ft_strequ(line + 1, "#start") && lemin->start == -1)
 		lemin->start = (*back)->id + 1;
-	else if (ft_strequ(line + 2, "#end") && lemin->end == -1)
+	else if (ft_strequ(line + 1, "#end") && lemin->end == -1)
 		lemin->end = (*back)->id + 1;
 }
+
+/*
+** Проверка на валидность количества муравьев.
+*/
 
 void check_ants(char *line, t_lem *lemin)
 {
@@ -60,6 +78,11 @@ void check_ants(char *line, t_lem *lemin)
 	if (lemin->number_of_ants <= 0)
 		error();
 }
+
+/*
+** Добавление комнаты в список
+** Проверка координат на валидность (еще нужно доделать проверку на int)
+*/
 
 void check_room(char *line, t_room **back)
 {
@@ -79,7 +102,7 @@ void check_room(char *line, t_room **back)
 		j = 0;
 		while (room[i][j])
 		{
-			if (!ft_isdigit(room[i][j]))
+			if (!ft_isdigit(room[i][j])  && room[i][j] == '-')
 				error();
 			j++;
 		}
@@ -88,6 +111,12 @@ void check_room(char *line, t_room **back)
 	push_back(back, room[0]);
 }
 
+
+/*
+** Поиск и сопоставление линка и имени в списке комнат. 
+** Возврат соответствующего id
+** Проверка на валидность линка
+*/
 int find_id(char *link, t_room **back, t_room *start)
 {
 	int i;
@@ -105,6 +134,10 @@ int find_id(char *link, t_room **back, t_room *start)
 	return (i);
 }
 
+/*
+** Выделение памяти на матрицу смежности
+*/
+
 void give_memory(t_room **back, t_lem *lemin)
 {
 	int i;
@@ -119,6 +152,9 @@ void give_memory(t_room **back, t_lem *lemin)
 	}
 }
 
+/*
+** Парсинг линков и формирование матрицы смежности
+*/
 void check_link(char *line, t_lem *lemin, t_room **back, t_room *start)
 {
 	char **link;
@@ -139,6 +175,9 @@ void check_link(char *line, t_lem *lemin, t_room **back, t_room *start)
 	lemin->adj_matrix[j][i] = 1;
 }
 
+/*
+**Проверка строк при парсинге
+*/
 void check_line(char *line, t_room **back , t_lem *lemin, t_room *start)
 {
 	
@@ -154,26 +193,85 @@ void check_line(char *line, t_room **back , t_lem *lemin, t_room *start)
 		check_link(line, lemin, back, start);
 }
 
-void algorithm(t_lem *lemin, t_room *start, t_room *back)
+/*
+**Добавление комнаты в очередь, при обходе в ширину
+*/
+void add(t_queue *q, int i)
+{
+	while(q->next != NULL)
+		q = q->next;
+	q->next = (t_queue *)malloc(sizeof(t_queue));
+	q->next->prev = q;
+	q->next->next = NULL;
+	q->next->number = q->number + 1;
+	q->next->id = i;
+}
+
+void algotithm(t_lem *lemin, t_room *rooms)
 {
 	int i;
-	int j;
+	t_queue *q;
+	int temp;
 
+	rooms[lemin->start].length = 0;
+	q = (t_queue *)malloc(sizeof(t_queue));
+	q->id = lemin->start;
+	ft_printf("start = %d\nend = %3d\nlemin->l = %d\n", lemin->start, lemin->end, lemin->l);
+	q->number = 0;
+	q->prev = NULL;
+	q->next = NULL;
+	printf("start while\n\n");
+	while(1)
+	{
+		i = 0;
+		temp = q->id;
+		while (i < lemin->l)
+		{
+			if (lemin->adj_matrix[temp][i] == 1 && rooms[i].length == NOT_CHECKED)
+			{
+				add(q, i);
+				rooms[i].length = q->number + 1;
+				ft_printf("%d\n", q->next->id);
+			}
+			i++;
+		}
+		if(q->next == NULL)
+		{
+			free(q);
+			break;
+		}
+		q = q->next;
+		free(q->prev);
+		q->prev = NULL;
+	}
+	ft_printf("end while\n");
+	int j = 0;
+	while(j < lemin->l)
+	{
+		ft_printf("rooms[%d].length = %d\n", j, rooms[j].length);
+		j++;
+	}
+}
+/*
+**Преобразование списка комнат в масив для удобства
+*/
+void list_to_array(t_lem *lemin, t_room *start, t_room *back)
+{
+	t_room *rooms;
+	int i;
+
+	rooms = (t_room *)malloc(sizeof(t_room) * (back->id + 1));
 	i = 0;
-	start->length = NOT_CHECKED;
-	if (lemin->adj_matrix == NULL)
-		error();
 	while (i <= back->id)
 	{
-		j = 0;
-		while (j <= back->id)
-		{
-			printf("%3d", lemin->adj_matrix[i][j]);
-			j++;
-		}
-		printf("\n");
+		rooms[i].id = start->id;
+		rooms[i].length = start->length;
+		rooms[i].name = start->name;
+		start = start->next;
 		i++;
 	}
+	lemin->l = back->id + 1;
+	algotithm(lemin, rooms);
 }
 
 int	main(void)
@@ -185,6 +283,7 @@ int	main(void)
 
 	start = (t_room *)malloc(sizeof(t_room));
 	start->name = NULL;
+	start->id = -1;
 	back = start;
 	lemin = (t_lem *)malloc(sizeof(t_room));
 	lemin->start = -1;
@@ -198,6 +297,6 @@ int	main(void)
 		check_line(line, &back, lemin, start);
 		free(line);
 	}
-	algorithm(lemin, start, back);
+	list_to_array(lemin, start, back);
 	return (0);
 }

@@ -30,7 +30,17 @@ typedef struct	s_lem
 {
 	int start;
 	int end;
+	int l;
 	int number_of_ants;
 	int **adj_matrix;
 }				t_lem;
+
+typedef struct	s_queue
+{
+	int id;
+	int number;
+	struct s_queue *next;
+	struct s_queue *prev;
+}				t_queue;
+
 #endif
