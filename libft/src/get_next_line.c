@@ -13,7 +13,7 @@
 #include "get_next_line.h"
 #include <stdio.h>
 
-t_bufer	*get_list(t_bufer **list, int fd)
+static t_bufer	*get_list(t_bufer **list, int fd)
 {
 	if (!(*list))
 	{
@@ -41,7 +41,7 @@ t_bufer	*get_list(t_bufer **list, int fd)
 	return (*list);
 }
 
-int		add_to_line(t_bufer **list, char **res, char *buf)
+static int		add_to_line(t_bufer **list, char **res, char *buf)
 {
 	char *temp;
 	char *pointer;
@@ -70,7 +70,7 @@ int		add_to_line(t_bufer **list, char **res, char *buf)
 	return (0);
 }
 
-int		valid_check(t_bufer **s_list, t_bufer **list, char **line, int fd)
+static int		valid_check(t_bufer **s_list, t_bufer **list, char **line, int fd)
 {
 	t_bufer	*temp;
 	char	buf[1];
@@ -86,7 +86,7 @@ int		valid_check(t_bufer **s_list, t_bufer **list, char **line, int fd)
 	return (0);
 }
 
-int		check_buf(t_bufer **list, char **line, char *buf, int fd)
+static int		check_buf(t_bufer **list, char **line, char *buf, int fd)
 {
 	int read_bytes;
 
@@ -106,7 +106,7 @@ int		check_buf(t_bufer **list, char **line, char *buf, int fd)
 	return (1);
 }
 
-int		get_next_line(const int fd, char **line)
+int				get_next_line(const int fd, char **line)
 {
 	char			*buf;
 	static	t_bufer	*s_list = NULL;

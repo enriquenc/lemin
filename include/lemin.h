@@ -33,6 +33,7 @@ typedef struct	s_lem
 	int l;
 	int number_of_ants;
 	int **adj_matrix;
+	int **answer_mtrx;
 }				t_lem;
 
 typedef struct	s_queue

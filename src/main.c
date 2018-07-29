@@ -144,10 +144,19 @@ void give_memory(t_room **back, t_lem *lemin)
 
 	i = 0;
 	lemin->adj_matrix = (int **)malloc(sizeof(int *) * ((*back)->id + 1));
+	
 	while (i <= (*back)->id)
 	{
 		lemin->adj_matrix[i] = (int *)malloc(sizeof(int) * ((*back)->id + 1));
 		ft_bzero(lemin->adj_matrix[i], (*back)->id + 1);
+		i++;
+	}
+	lemin->answer_mtrx = (int **)malloc(sizeof(int *) * ((*back)->id + 1));
+	i = 0;
+	while (i <= (*back)->id)
+	{
+		lemin->answer_mtrx[i] = (int *)malloc(sizeof(int) * ((*back)->id + 1));
+		ft_bzero(lemin->answer_mtrx[i], (*back)->id + 1);
 		i++;
 	}
 }
@@ -171,6 +180,8 @@ void check_link(char *line, t_lem *lemin, t_room **back, t_room *start)
 		give_memory(back, lemin);
 	i = find_id(link[0], back, start);
 	j = find_id(link[1], back, start);
+	if (i == j)
+		return ;
 	lemin->adj_matrix[i][j] = 1;
 	lemin->adj_matrix[j][i] = 1;
 }
@@ -207,31 +218,69 @@ void add(t_queue *q, int i)
 	q->next->id = i;
 }
 
+/*
+** Проверка на то ли существует нужный путь
+*/
+
+void valid_check(t_lem *lemin)
+{
+	int i;
+	int j;
+
+	i = 0;
+	while (i < lemin->l)
+	{
+		if (lemin->adj_matrix[lemin->start][i] != 0)
+			break ;
+		i++;
+	}
+	j = 0;
+	while (j < lemin->l)
+	{
+		if (lemin->adj_matrix[lemin->end][j] != 0)
+			break ;
+		j++;
+	}
+	if (i == lemin->l || j == lemin->l)
+		error();
+}
+
 void algotithm(t_lem *lemin, t_room *rooms)
 {
 	int i;
 	t_queue *q;
-	int temp;
 
+	valid_check(lemin);
 	rooms[lemin->start].length = 0;
 	q = (t_queue *)malloc(sizeof(t_queue));
 	q->id = lemin->start;
-	ft_printf("start = %d\nend = %3d\nlemin->l = %d\n", lemin->start, lemin->end, lemin->l);
 	q->number = 0;
 	q->prev = NULL;
 	q->next = NULL;
+	
+
+
+	ft_printf("start = %d\nend = %3d\nlemin->l = %d\n", lemin->start, lemin->end, lemin->l);
+	for(i = 0; i < lemin->l; i++)
+	{
+		for(int j = 0; j < lemin->l; j++)
+			ft_printf("%3d", lemin->adj_matrix[i][j]);
+		ft_printf("\n");
+	}
+	for(i = 0; i < lemin->l; i++)
+		ft_printf("[%d] = %d\n", i, rooms[i].length);
+
 	printf("start while\n\n");
 	while(1)
 	{
 		i = 0;
-		temp = q->id;
 		while (i < lemin->l)
 		{
-			if (lemin->adj_matrix[temp][i] == 1 && rooms[i].length == NOT_CHECKED)
+			if (lemin->adj_matrix[q->id][i] == 1 && rooms[i].length == NOT_CHECKED)
 			{
+				rooms[i].length = rooms[q->id].length + 1;
 				add(q, i);
-				rooms[i].length = q->number + 1;
-				ft_printf("%d\n", q->next->id);
+				ft_printf("%d\n", q->id);
 			}
 			i++;
 		}
@@ -245,12 +294,71 @@ void algotithm(t_lem *lemin, t_room *rooms)
 		q->prev = NULL;
 	}
 	ft_printf("end while\n");
-	int j = 0;
-	while(j < lemin->l)
-	{
+	for(int j = 0; j < lemin->l; j++)
 		ft_printf("rooms[%d].length = %d\n", j, rooms[j].length);
-		j++;
+	int j;
+	int prev;
+	int min = lemin->l;
+	int min_id = lemin->l;
+	i = 0;
+	if (lemin->adj_matrix[lemin->end][lemin->start] == 1)
+	{
+		lemin->answer_mtrx[i][lemin->end] = rooms[lemin->end].length;
+		lemin->adj_matrix[lemin->end][lemin->start] = 0;
+		lemin->adj_matrix[lemin->start][lemin->end] = 0;
+		i++;
 	}
+	for(int f = 0; f < lemin->l; f++)
+	{
+		for(int j = 0; j < lemin->l; j++)
+			ft_printf("%3d", lemin->adj_matrix[f][j]);
+		ft_printf("\n");
+	}
+	ft_printf("\n\n");
+	while (i < lemin->l)
+	{
+		prev = lemin->end;
+		lemin->answer_mtrx[i][lemin->end] = rooms[lemin->end].length;
+		while (1)
+		{
+			min = lemin->l;
+			min_id = lemin->l;
+			j = 0;
+			while (j < lemin->l)
+			{
+				if (lemin->adj_matrix[prev][j] == 1 && min > rooms[j].length && j != lemin->end)
+				{
+					min = rooms[j].length;
+					min_id = j;
+					ft_printf("prev = %d, i = %d\n", prev, i);
+				}
+				j++;
+			}
+			if (min == lemin->l || min_id == lemin->l)
+			{
+				ft_bzero(lemin->answer_mtrx[i], lemin->l);
+				for (int n = 0; n < lemin->l; n++)
+					lemin->answer_mtrx[i][n] = 0;
+				break ;
+			}
+			if (min == 0)
+				break;
+			lemin->adj_matrix[prev][min_id] = ALREADY_IN_PATH;
+			lemin->adj_matrix[min_id][prev] = ALREADY_IN_PATH;
+			lemin->answer_mtrx[i][min_id] = min;
+			prev = min_id;
+		}
+		i++;
+	}
+
+	for(i = 0; i < lemin->l; i++)
+	{
+		for(j = 0; j < lemin->l; j++)
+			ft_printf("%3d", lemin->answer_mtrx[i][j]);
+		ft_printf("\n");
+	}
+	for(j = 0; j < lemin->l; j++)
+		ft_printf("rooms[%d].length = %d\n", j, rooms[j].length);
 }
 /*
 **Преобразование списка комнат в масив для удобства
