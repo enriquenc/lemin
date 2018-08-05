@@ -16,12 +16,12 @@
 # define ALREADY_IN_PATH -2
 
 # include "../libft/include/libft.h"
-# include <stdint.h>
 
 typedef	struct	s_room
 {
 	int				id;
 	int				length;
+	int				is_path;
 	char			*name;
 	struct s_room	*next;
 }				t_room;
@@ -31,7 +31,7 @@ typedef struct	s_lem
 	int start;
 	int end;
 	int l;
-	int number_of_ants;
+	long long number_of_ants;
 	int **adj_matrix;
 	int **answer_mtrx;
 }				t_lem;
@@ -43,5 +43,11 @@ typedef struct	s_queue
 	struct s_queue *next;
 	struct s_queue *prev;
 }				t_queue;
+
+typedef struct	s_out
+{
+	int id;
+	int n_ant;
+}				t_out;
 
 #endif

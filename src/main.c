@@ -75,7 +75,7 @@ void check_ants(char *line, t_lem *lemin)
 		i++;
 	}
 	lemin->number_of_ants = ft_atoi(line);
-	if (lemin->number_of_ants <= 0)
+	if (lemin->number_of_ants <= 0 || lemin->number_of_ants > 2147483647)
 		error();
 }
 
@@ -108,6 +108,8 @@ void check_room(char *line, t_room **back)
 		}
 		i++;
 	}
+	if(ft_atoi(room[1]) > 2147483647 || ft_atoi(room[2]) > 2147483647)
+		error();
 	push_back(back, room[0]);
 }
 
@@ -259,7 +261,6 @@ void algotithm(t_lem *lemin, t_room *rooms)
 	q->next = NULL;
 	
 
-
 	ft_printf("start = %d\nend = %3d\nlemin->l = %d\n", lemin->start, lemin->end, lemin->l);
 	for(i = 0; i < lemin->l; i++)
 	{
@@ -315,10 +316,12 @@ void algotithm(t_lem *lemin, t_room *rooms)
 		ft_printf("\n");
 	}
 	ft_printf("\n\n");
+	int prd = 1;
 	while (i < lemin->l)
 	{
 		prev = lemin->end;
-		lemin->answer_mtrx[i][lemin->end] = rooms[lemin->end].length;
+		lemin->answer_mtrx[i][lemin->end] = lemin->l;
+		prd = lemin->l - 1;
 		while (1)
 		{
 			min = lemin->l;
@@ -326,11 +329,10 @@ void algotithm(t_lem *lemin, t_room *rooms)
 			j = 0;
 			while (j < lemin->l)
 			{
-				if (lemin->adj_matrix[prev][j] == 1 && min > rooms[j].length && j != lemin->end)
+				if (lemin->adj_matrix[prev][j] == 1 && min > rooms[j].length && j != lemin->end && rooms[j].is_path != ALREADY_IN_PATH)
 				{
 					min = rooms[j].length;
 					min_id = j;
-					ft_printf("prev = %d, i = %d\n", prev, i);
 				}
 				j++;
 			}
@@ -343,11 +345,15 @@ void algotithm(t_lem *lemin, t_room *rooms)
 			}
 			if (min == 0)
 				break;
-			lemin->adj_matrix[prev][min_id] = ALREADY_IN_PATH;
-			lemin->adj_matrix[min_id][prev] = ALREADY_IN_PATH;
-			lemin->answer_mtrx[i][min_id] = min;
+			lemin->adj_matrix[prev][min_id] = 0;
+			lemin->adj_matrix[min_id][prev] = 0;
+			rooms[min_id].is_path = ALREADY_IN_PATH;
+			lemin->answer_mtrx[i][min_id] = prd;
+			prd--;
+			printf("\nansw_mtrx = %d\n", lemin->answer_mtrx[i][min_id]);
 			prev = min_id;
 		}
+		
 		i++;
 	}
 
@@ -359,6 +365,46 @@ void algotithm(t_lem *lemin, t_room *rooms)
 	}
 	for(j = 0; j < lemin->l; j++)
 		ft_printf("rooms[%d].length = %d\n", j, rooms[j].length);
+	int count = 0;
+	int count1 = 0;
+	int size = 0;
+	while (count < lemin->l)
+	{
+		count1 = 0;
+		while (count1 < lemin->l)
+		{
+			if (lemin->answer_mtrx[count][count1] != 0)
+			{
+				size++;
+				break;
+			}
+			count1++;
+		}
+		if (count1 == lemin->l)
+			break;
+		count++;
+	}
+	t_out **ans = (t_out **)malloc(sizeof(t_out *) * size);
+	count = 0;
+	size = 0;
+	int k = 0;
+	while (count < size)
+	{
+		count1 = 0;
+		while (count1 < lemin->l)
+		{
+			if (lemin->answer_mtrx[count][count1] != 0)
+				size++;
+			count1++;
+		}
+		ans[count] = (t_out *)malloc(sizeof(t_out) * size);
+		count++;
+		count1 = 0;
+		while (k < size)
+		{
+			if (lemin->answer_mtrx[count][])
+		}
+	}
 }
 /*
 **Преобразование списка комнат в масив для удобства
@@ -375,6 +421,7 @@ void list_to_array(t_lem *lemin, t_room *start, t_room *back)
 		rooms[i].id = start->id;
 		rooms[i].length = start->length;
 		rooms[i].name = start->name;
+		rooms[i].is_path = 0;
 		start = start->next;
 		i++;
 	}
@@ -401,10 +448,15 @@ int	main(void)
 	while(get_next_line(0, &line) > 0)
 	{
 		if (line[0] == '\0')
+		{
+			ft_printf("\n");
 			break;
+		}
 		check_line(line, &back, lemin, start);
+		ft_printf("%s\n", line);
 		free(line);
 	}
+	ft_printf("\n");
 	list_to_array(lemin, start, back);
 	return (0);
 }
