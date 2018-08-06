@@ -46,7 +46,7 @@ typedef struct	s_queue
 
 typedef struct	s_out
 {
-	int id;
+	char *name;
 	int n_ant;
 }				t_out;
 

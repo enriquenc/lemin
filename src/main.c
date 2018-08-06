@@ -384,7 +384,7 @@ void algotithm(t_lem *lemin, t_room *rooms)
 			break;
 		count++;
 	}
-	t_out **ans = (t_out **)malloc(sizeof(t_out *) * size);
+	t_out ***ans = (t_out ***)malloc(sizeof(t_out **) * size);
 	count = 0;
 	size = 0;
 	int k = 0;
@@ -397,13 +397,28 @@ void algotithm(t_lem *lemin, t_room *rooms)
 				size++;
 			count1++;
 		}
-		ans[count] = (t_out *)malloc(sizeof(t_out) * size);
+		ans[count] = (t_out **)malloc(sizeof(t_out *) * size);
 		count++;
-		count1 = 0;
-		while (k < size)
+		
+		k = lemin->l - size;
+		int l = 0;
+		while (k <= lemin->l)
 		{
-			if (lemin->answer_mtrx[count][])
+			count1 = 0;
+			while (count1 < lemin->l)
+			{
+				if (lemin->answer_mtrx[count][count1] == k)
+				{
+					lemin->answer_mtrx[count][count1] = 0;
+					ans[count][l]->name = ft_strdup(rooms[count1].name);
+					ans[count][l]->n_ant = 0;
+					ft_printf("%s ", ans[count][l]->name);
+				}
+				count1++;
+			}
+			k++;
 		}
+		ft_printf("\n");
 	}
 }
 /*
