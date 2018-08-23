@@ -70,7 +70,8 @@ static int		add_to_line(t_bufer **list, char **res, char *buf)
 	return (0);
 }
 
-static int		valid_check(t_bufer **s_list, t_bufer **list, char **line, int fd)
+static int		valid_check(t_bufer **s_list, t_bufer **list,
+	char **line, int fd)
 {
 	t_bufer	*temp;
 	char	buf[1];

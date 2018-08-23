@@ -10,24 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-static int	result(long int res, int minus)
-{
-	if (res < 0)
-	{
-		if (minus)
-			return (0);
-		else
-			return (-1);
-	}
-	if (minus)
-		return (-res);
-	return (res);
-}
-
-int			ft_atoi(const char *str)
+long long		ft_atoi(const char *str)
 {
 	int			minus;
-	long int	res;
+	long long	res;
 
 	minus = 0;
 	res = 0;
@@ -47,5 +33,7 @@ int			ft_atoi(const char *str)
 		res += *str - 48;
 		str++;
 	}
-	return (result(res, minus));
+	if (minus)
+		return (-res);
+	return (res);
 }

@@ -1,6 +1,6 @@
 NAME = lem-in
 
-SRCNAME	=   main.c \
+SRCNAME	=   main.c opt_functions.c check_func.c algorithm.c simple_queue.c
 
 SRC    = $(addprefix src/, $(SRCNAME))
 OBJECT = $(SRC:.c=.o)
