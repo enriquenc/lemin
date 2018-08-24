@@ -31,6 +31,7 @@ typedef struct	s_lem
 	int			start;
 	int			end;
 	int			l;
+	int			links;
 	long long	number_of_ants;
 	int			**adj_matrix;
 	int			**answer_mtrx;
@@ -44,14 +45,6 @@ typedef struct	s_queue
 	struct s_queue	*prev;
 }				t_queue;
 
-typedef struct	s_out
-{
-	char			*name;
-	int				n_ant;
-	struct s_out	*next;
-	struct s_out	*prev;
-}				t_out;
-
 typedef struct	s_alg
 {
 	int pred;
@@ -64,7 +57,7 @@ void			error(const char *message);
 void			check_coords(char **room);
 void			check_spaces(char *line);
 int				find_id(char *link, t_room **back, t_room *start);
-int				check_sub(char *line);
+int				check_sub(char *line, t_lem *lemin, t_room **back);
 void			check_hash(char *line, t_lem *lemin, t_room **back);
 void			check_ants(char *line, t_lem *lemin);
 void			check_room(char *line, t_room **back, t_room *start);
@@ -74,9 +67,11 @@ int				check_link(char *line, t_lem *lemin,
 void			push_back(t_room **back, char *name);
 void			give_memory(t_room **back, t_lem *lemin);
 void			add(t_queue *q, int i);
-void			list_to_array(t_lem *lemin, t_room *start, t_room *back);
+void			list_to_array(t_lem *lemin, t_room *start,
+				t_room *back);
 void			algorithm(t_lem *lemin, t_room *rooms);
 void			push_back(t_room **back, char *name);
 void			add(t_queue *q, int i);
+void			free_it(char **arr);
 
 #endif

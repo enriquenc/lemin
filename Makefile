@@ -5,7 +5,7 @@ SRCNAME	=   main.c opt_functions.c check_func.c algorithm.c simple_queue.c
 SRC    = $(addprefix src/, $(SRCNAME))
 OBJECT = $(SRC:.c=.o)
 FLAGS  = -Wall -Wextra -Werror
-HDIR   = include
+HDIR   = include/lemin.h
 LIBFT = libft/libft.a
 
 all: lib $(NAME)

@@ -12,6 +12,19 @@
 
 #include "../include/lemin.h"
 
+void	free_it(char **arr)
+{
+	int i;
+
+	i = 0;
+	while (arr[i])
+	{
+		free(arr[i]);
+		i++;
+	}
+	free(arr);
+}
+
 /*
 ** Выделение памяти на матрицу смежности
 */
@@ -60,6 +73,7 @@ void	list_to_array(t_lem *lemin, t_room *start, t_room *back)
 	lemin->l = back->id + 1;
 	ft_printf("\n");
 	algorithm(lemin, rooms);
+	free(rooms);
 }
 
 /*
@@ -74,7 +88,7 @@ int		check_line(char *line, t_room **back, t_lem *lemin, t_room *start)
 		error("Room starts from 'L' can't exist.");
 	else if (lemin->number_of_ants == -1)
 		check_ants(line, lemin);
-	else if (ft_strchr(line, ' '))
+	else if (ft_strchr(line, ' ') && !lemin->links)
 		check_room(line, back, start);
 	else
 		return (check_link(line, lemin, back, start));
@@ -95,16 +109,16 @@ int		main(void)
 	lemin = (t_lem *)malloc(sizeof(t_room));
 	lemin->start = -1;
 	lemin->end = -1;
+	lemin->links = 0;
 	lemin->number_of_ants = -1;
 	lemin->adj_matrix = NULL;
-	while (get_next_line(0, &line) > 0)
+	while (get_next_line(0, &line) > 0 && ft_printf("%s\n", line))
 	{
 		if (check_line(line, &back, lemin, start))
 			break ;
-		ft_printf("%s\n", line);
 		free(line);
 	}
+	free(line);
 	list_to_array(lemin, start, back);
-	system("leaks lem-in");
 	return (0);
 }

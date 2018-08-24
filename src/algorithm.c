@@ -92,6 +92,9 @@ void	find_fastest_path_start(t_lem *lemin, t_room *rooms)
 	find_fastest_path(ag, lemin, rooms, &answer);
 	answer->n_ant = 1;
 	out(start, answer, lemin);
+	answer = start;
+	ft_lstdel(&answer);
+	free(ag);
 }
 
 void	b_f_search(t_lem *lemin, t_room *rooms, t_queue *q)

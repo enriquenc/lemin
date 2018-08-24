@@ -94,11 +94,14 @@ int		find_id(char *link, t_room **back, t_room *start)
 ** Проверка: один ли минус в линке.
 */
 
-int		check_sub(char *line)
+int		check_sub(char *line, t_lem *lemin, t_room **back)
 {
 	int i;
 	int j;
 
+	lemin->links = 1;
+	if (lemin->start >= (*back)->id + 1 || lemin->end >= (*back)->id + 1)
+		error("There is no ##start / ##end room.");
 	i = 0;
 	j = 0;
 	while (line[i])

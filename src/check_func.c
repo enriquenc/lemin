@@ -18,6 +18,10 @@
 
 void	check_hash(char *line, t_lem *lemin, t_room **back)
 {
+	if (ft_strequ(line + 1, "#start") && lemin->start != -1)
+		error("Error command ##start. Start room is already exist.");
+	if (ft_strequ(line + 1, "#end") && lemin->end != -1)
+		error("Error command ##end. End room is already exist.");
 	if (ft_strequ(line + 1, "#start") && lemin->start == -1)
 		lemin->start = (*back)->id + 1;
 	else if (ft_strequ(line + 1, "#end") && lemin->end == -1)
@@ -41,7 +45,7 @@ void	check_ants(char *line, t_lem *lemin)
 	}
 	lemin->number_of_ants = ft_atoi(line);
 	if (lemin->number_of_ants < 0 || lemin->number_of_ants > 2147483647)
-		error("Number of ants is not integer.");
+		error("Number of ants is not positive integer.");
 	if (lemin->number_of_ants == 0)
 		error("There is no ant.");
 }
@@ -59,11 +63,6 @@ void	check_room(char *line, t_room **back, t_room *start)
 	i = 0;
 	check_spaces(line);
 	room = ft_strsplit(line, ' ');
-	while (room[i] != NULL)
-		i++;
-	if (i != 3)
-		error("Invalid room.\nUsage: [name of room] [x][y].");
-	i = 0;
 	while (room[0][i])
 	{
 		if (room[0][i] == '-')
@@ -74,6 +73,7 @@ void	check_room(char *line, t_room **back, t_room *start)
 	if (find_id(room[0], back, start) != (*back)->id + 1)
 		error("You can't use the same name of the room.");
 	push_back(back, room[0]);
+	free_it(room);
 }
 
 /*
@@ -119,23 +119,25 @@ int		check_link(char *line, t_lem *lemin, t_room **back, t_room *start)
 	int		i;
 	int		j;
 
-	if (check_sub(line))
+	if (check_sub(line, lemin, back))
 		return (1);
 	link = ft_strsplit(line, '-');
-	i = 0;
-	while (link[i] != NULL)
-		i++;
 	if (lemin->adj_matrix == NULL)
 		give_memory(back, lemin);
-	if (i != 2)
+	i = find_id(link[0], back, start);
+	j = find_id(link[1], back, start);
+	if (i == (*back)->id + 1 || j == (*back)->id + 1)
+	{
+		free_it(link);
 		return (1);
-	if ((i = find_id(link[0], back, start)) == (*back)->id + 1)
-		return (1);
-	if ((j = find_id(link[1], back, start)) == (*back)->id + 1)
-		return (1);
+	}
 	if (i == j)
+	{
+		free_it(link);
 		return (0);
+	}
 	lemin->adj_matrix[i][j] = 1;
 	lemin->adj_matrix[j][i] = 1;
+	free_it(link);
 	return (0);
 }
