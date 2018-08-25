@@ -49,3 +49,20 @@ void	add(t_queue *q, int i)
 	q->next->number = q->number + 1;
 	q->next->id = i;
 }
+
+char	**check_link_opt(char *line)
+{
+	char	**link;
+	int		i;
+
+	link = ft_strsplit(line, '-');
+	i = 0;
+	while (link[i++])
+		;
+	if (i != 3)
+	{
+		free_it(link);
+		return (NULL);
+	}
+	return (link);
+}

@@ -80,18 +80,18 @@ void	list_to_array(t_lem *lemin, t_room *start, t_room *back)
 **Проверка строк при парсинге
 */
 
-int		check_line(char *line, t_room **back, t_lem *lemin, t_room *start)
+int		check_line(char **line, t_room **back, t_lem *lemin, t_room *start)
 {
-	if (line[0] == '#')
-		check_hash(line, lemin, back);
-	else if (line[0] == 'L')
+	if ((*line)[0] == '#')
+		check_hash(*line, lemin, back);
+	else if ((*line)[0] == 'L')
 		error("Room starts from 'L' can't exist.");
 	else if (lemin->number_of_ants == -1)
 		check_ants(line, lemin);
-	else if (ft_strchr(line, ' ') && !lemin->links)
-		check_room(line, back, start);
+	else if (ft_strchr(*line, ' ') && !lemin->links)
+		check_room(*line, back, start);
 	else
-		return (check_link(line, lemin, back, start));
+		return (check_link(*line, lemin, back, start));
 	return (0);
 }
 
@@ -108,14 +108,15 @@ int		main(void)
 	back = start;
 	lemin = (t_lem *)malloc(sizeof(t_room));
 	lemin->start = -1;
-	lemin->end = -1;
+	lemin->end = -2;
 	lemin->links = 0;
 	lemin->number_of_ants = -1;
 	lemin->adj_matrix = NULL;
-	while (get_next_line(0, &line) > 0 && ft_printf("%s\n", line))
+	while (get_next_line(0, &line) && line)
 	{
-		if (check_line(line, &back, lemin, start))
+		if (check_line(&line, &back, lemin, start))
 			break ;
+		ft_printf("%s\n", line);
 		free(line);
 	}
 	free(line);

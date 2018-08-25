@@ -59,7 +59,7 @@ void			check_spaces(char *line);
 int				find_id(char *link, t_room **back, t_room *start);
 int				check_sub(char *line, t_lem *lemin, t_room **back);
 void			check_hash(char *line, t_lem *lemin, t_room **back);
-void			check_ants(char *line, t_lem *lemin);
+void			check_ants(char **line, t_lem *lemin);
 void			check_room(char *line, t_room **back, t_room *start);
 void			valid_check(t_lem *lemin);
 int				check_link(char *line, t_lem *lemin,
@@ -73,5 +73,6 @@ void			algorithm(t_lem *lemin, t_room *rooms);
 void			push_back(t_room **back, char *name);
 void			add(t_queue *q, int i);
 void			free_it(char **arr);
+char			**check_link_opt(char *line);
 
 #endif

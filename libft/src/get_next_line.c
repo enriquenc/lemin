@@ -114,8 +114,8 @@ int				get_next_line(const int fd, char **line)
 	t_bufer			*list;
 	int				check;
 
-	if (!(buf = (char *)malloc(sizeof(char) * (BUFF_SIZE + 1)))
-		|| valid_check(&s_list, &list, line, fd) == -1)
+	if (valid_check(&s_list, &list, line, fd) == -1 ||
+	!(buf = (char *)malloc(sizeof(char) * (BUFF_SIZE + 1))))
 		return (-1);
 	*line = NULL;
 	if (add_to_line(&list, line, list->buf))
